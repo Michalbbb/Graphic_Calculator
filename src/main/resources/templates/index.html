@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Graphic Calculator</title>
+    <style>
+        body {
+            font-family: "Roboto";
+            color: lightgrey;
+            background-color: rgb(22, 22, 22);
+            margin: 0 auto;
+        }
+
+        .all {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            max-width: 95vw;
+            margin: 0 auto;
+        }
+
+        .headline {
+            width: 100%;
+            height: 22vh;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .logo {
+            height: 50%;
+            width: 15%;
+            color: #5f8c32;
+            text-align: left;
+            vertical-align: top;
+            margin-top: 0;
+            padding-top: 1vw;
+        }
+
+        .left {
+            width: 40vw;
+            height: 100%;
+            /* background-color: darkgreen; */
+            border-radius: 10%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .x-section {
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            font-size: 25px;
+            align-items: center;
+            padding-top: 2vh;
+        }
+
+        .x-input {
+            width: 100%;
+            height: 10%;
+            accent-color: #5f8c32;
+        }
+
+        .y-section {
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            font-size: 25px;
+            align-items: center;
+            padding-top: 2vh;
+        }
+
+        .y-input {
+            width: 100%;
+            height: 10%;
+            accent-color: #5f8c32;
+        }
+
+        .r10 {
+            margin-top: 1vh;
+            word-spacing: 15px;
+        }
+
+        .eq {
+            width: 30%;
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+            height: 100%;
+            font-size: 25px;
+            align-items: center;
+            vertical-align: top;
+        }
+
+        .eq-title {
+            font-size: 40px;
+            text-align: center;
+            margin-top: 4vh;
+            padding-top: 3.5vh;
+            margin-bottom: 12px;
+        }
+
+        .eq-input {
+            width: 100%;
+            color: black;
+            background-color: #5f8c32;
+            height: 15%;
+            box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+            border-radius: 35px;
+            padding-left: 15px;
+            padding-right: 15px;
+            font-size: 30px;
+        }
+
+        .eq-input:focus-visible {
+            outline-color: lightgray;
+        }
+
+        .left-title {
+            width: 100%;
+            height: 10%;
+            padding: 0;
+            margin: 0;
+            padding-top: 1vw;
+        }
+
+        /*
+        input {
+          max-width: 350px;
+          max-height: 50px;
+          color: black;
+          background-color: #5f8c32;
+          font-size: 40px;
+          font-family: "Roboto", cursive;
+          text-align: center;
+          box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+          border-radius: 35px;
+        }
+        */
+
+        label {
+            /* color: white; */
+            font-size: 50px;
+            text-align: center;
+        }
+
+        input[name="range"] {
+            /*
+            width: 95%;
+            height: 40px;
+            color: black;
+            background-color: yellow;
+            box-shadow: 5px 5px 5px white;
+            font-family: "Roboto", cursive;
+            */
+            font-size: 40px;
+            text-align: center;
+            border-radius: 50px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 60px;
+            /*
+            color: pink;
+            font-family: "Gill Sans MT", cursive;
+            */
+        }
+
+        h2 {
+            font-size: 30px;
+            text-align: center;
+            /*
+            color: pink;
+            font-family: "Gill Sans MT", cursive;
+            */
+        }
+
+        /*
+        div[name="left"] {
+          float: left;
+          display: inline;
+          width: 23%;
+          background-color: darkgreen;
+          border-radius: 10%;
+        }
+        */
+
+        canvas {
+            float: right;
+            display: inline;
+        }
+
+        /*
+        p {
+          font-size: 30px;
+          text-align: center;
+          color: white;
+        }
+        */
+    </style>
+    <script>
+        let minRangeX=-100;
+        let maxRangeX=100;
+        let separatorForInputX=10;
+        let minRangeY=-100;
+        let maxRangeY=100;
+        let separatorForInputY=10;
+        function fillBlack(){
+            const canvas = document.getElementById("drawingCanvas");
+            const ctx = canvas.getContext("2d");
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.beginPath();
+            ctx.lineWidth=3;
+            ctx.strokeStyle="grey";
+            ctx.moveTo(canvas.width/2, 0);
+            ctx.lineTo(canvas.width/2, canvas.height);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height/2);
+            ctx.lineTo(canvas.width, canvas.height/2);
+            ctx.stroke();
+        }
+        function issueWarning(desc){
+            const canvas = document.getElementById("drawingCanvas");
+            const ctx = canvas.getContext("2d");
+
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.font ="4rem \"Fira Sans\", serif";
+            ctx.textAlign="center";
+            ctx.strokeStyle="pink";
+            ctx.strokeText(desc, canvas.width/2, canvas.height/2);
+
+        }
+        function setAxis(){
+            const canvas = document.getElementById("drawingCanvas");
+            const ctx = canvas.getContext("2d");
+            ctx.beginPath();
+            ctx.lineWidth=3;
+            ctx.strokeStyle="grey";
+            ctx.moveTo(canvas.width/2, 0);
+            ctx.lineTo(canvas.width/2, canvas.height);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height/2);
+            ctx.lineTo(canvas.width, canvas.height/2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.lineWidth=1;
+            let divideBy=maxRangeX-minRangeX;
+            let x=0;
+            for(let i=minRangeX;i<maxRangeX+1;i+=separatorForInputX){
+                if(i!==0) {
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, canvas.height);
+                    ctx.stroke();
+                }
+                ctx.beginPath();
+                x+=canvas.width/(divideBy/separatorForInputX);
+            }
+            divideBy=maxRangeY-minRangeY;
+            let y=0;
+            for(let i=minRangeY;i<maxRangeY;i+=separatorForInputY){
+                if(i!==0) {
+                    ctx.moveTo(0,y);
+                    ctx.lineTo(canvas.width,y);
+                    ctx.stroke();
+                }
+                ctx.beginPath();
+                y+=canvas.height/(divideBy/separatorForInputY);
+            }
+        }
+        function setText(){
+            const canvas = document.getElementById("drawingCanvas");
+            const ctx = canvas.getContext("2d");
+            ctx.beginPath();
+            let divideBy=maxRangeX-minRangeX;
+
+            ctx.font ="2rem \"Fira Sans\", serif";
+            ctx.textAlign="center";
+            ctx.strokeStyle="pink";
+            let x=0;
+            for(let i=minRangeX;i<maxRangeX+1;i+=separatorForInputX){
+                let textWidth = ctx.measureText(i).width;
+                if(i>0)textWidth*=-1;
+                if(i!=0)
+                    ctx.strokeText(i, x+textWidth/2, canvas.height/2-5);
+                ctx.beginPath();
+                x+=canvas.width/(divideBy/separatorForInputX);
+            }
+            divideBy=maxRangeY-minRangeY;
+            let y=0;
+            for(let i=maxRangeY;i>=minRangeY;i-=separatorForInputY){
+                let metrics = ctx.measureText(i);
+                let textHeight = (metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent);
+                if(i<0)textHeight=0;
+                if(i!=0)
+                    ctx.strokeText(i, canvas.width/2+canvas.width/84, y+textHeight);
+                ctx.beginPath();
+                y+=canvas.height/(divideBy/separatorForInputY);
+            }
+
+
+        }
+
+        function sendInput() {
+            let put = document.getElementById('inputField').value;
+            let nput = put.replaceAll("+","<");
+            let input = nput.replaceAll("^",">");
+
+
+            fetch(`/generateLine?input=${input}&min=${minRangeX}&max=${maxRangeX}`)
+                .then(response => response.json())
+                .then(data => {
+
+                    if(Object.keys(data).length!==202&&input.length>0){
+                        if(data['error']===1) issueWarning("Equations with y are not supported.");
+                        else if(data['error']===2) issueWarning("Equation contains not allowed symbols.");
+                        else issueWarning("Syntax error.");
+                        return;
+                    }
+
+                    let canvas = document.getElementById('drawingCanvas');
+                    let context = canvas.getContext('2d');
+                    context.clearRect(0, 0, canvas.width, canvas.height);
+                    context.beginPath();
+                    context.fillStyle = "black";
+                    context.fillRect(0, 0, canvas.width, canvas.height);
+                    setAxis();
+                    context.lineWidth=4;
+                    context.strokeStyle="orange";
+                    let middle=canvas.height/2;
+                    let relativeXScaling=canvas.width/((maxRangeX-minRangeX));
+                    let relativeYScaling=canvas.height/((maxRangeY-minRangeY));
+                    for(let i=0;i<100;i+=1)
+                    {
+                        let xKey = `x${i}`;
+                        let yKey = `y${i}`;
+                        let xKey2 = `x${i+1}`;
+                        let yKey2 = `y${i+1}`;
+                        let x = data[xKey];
+                        let y = data[yKey];
+                        let x2= data[xKey2];
+                        let y2= data[yKey2];
+                        context.beginPath();
+                        context.moveTo(x*relativeXScaling, middle-y*relativeYScaling);
+                        context.lineTo(x2*relativeXScaling, middle-y2*relativeYScaling);
+                        context.stroke();
+                    }
+                    setText();
+
+                });
+        }
+        function changeValueX(){
+            minRangeX=document.getElementById('rangeX').value*-1;
+            maxRangeX=document.getElementById('rangeX').value;
+            separatorForInputX=maxRangeX/10;
+            document.getElementById('number1').textContent="["+minRangeX+"] - ["+maxRangeX+"]";
+            sendInput();
+        }
+        function changeValueY(){
+            minRangeY=document.getElementById('rangeY').value*-1;
+            maxRangeY=document.getElementById('rangeY').value;
+            separatorForInputY=maxRangeY/10;
+            document.getElementById('number2').textContent="["+minRangeY+"] - ["+maxRangeY+"]";
+            sendInput();
+        }
+
+        window.onload = function() {
+            document.getElementById('inputField').addEventListener('input', sendInput);
+            document.getElementById('rangeX').addEventListener('input', changeValueX);
+            document.getElementById('rangeY').addEventListener('input', changeValueY);
+        };
+
+    </script>
+</head>
+<body>
+<div class="all">
+    <div class="headline">
+        <h1 class="logo">Graphic Calculator</h1>
+        <div name="left" class="left">
+            <!-- <p class="left-title">Range for graph</p> -->
+            <div class="x-section">
+                <p class="x-mark">X</p>
+                <p id="number1" class="r10">[-100] - [100]</p>
+                <input
+                        class="x-input"
+                        type="range"
+                        id="rangeX"
+                        name="range"
+                        min="10"
+                        max="1000"
+                        value="100"
+                        step="10"
+                />
+            </div>
+            <div class="y-section">
+                <p class="y-mark">Y</p>
+                <p id="number2" class="r10">[-100] - [100]</p>
+                <input
+                        class="y-input"
+                        type="range"
+                        id="rangeY"
+                        name="range"
+                        min="10"
+                        max="10000"
+                        value="100"
+                        step="10"
+                />
+            </div>
+        </div>
+        <div class="eq">
+            <h2 class="eq-title">Equation</h2>
+            <input type="text" id="inputField" class="eq-input" />
+
+        </div>
+    </div>
+    <div class="bottom">
+        <canvas
+                class="bottom-canvas"
+                id="drawingCanvas"
+                width="1400"
+                height="800"
+                style="border: 3px solid darkgrey"
+        ></canvas></div>
+</div>
+
+
+<script>fillBlack();setAxis();setText();</script>
+</body>
+</html>
