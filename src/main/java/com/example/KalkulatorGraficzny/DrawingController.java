@@ -39,8 +39,7 @@ public class DrawingController { // > is power and < is plus
 
             String stringWithSpaces=addSpaces(normalizedString);
             String finalString= swapLettersToNumber(stringWithSpaces,numberTracker);
-            System.out.println("PRE PRN->"+finalString+"\n");
-            System.out.println("RPN ->"+infixToRpn(finalString));
+
             double y = evaluateRpn(infixToRpn(finalString));
 
             if(min<0)xForCanvas=numberTracker-min;
